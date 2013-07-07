@@ -11,16 +11,16 @@ namespace Neo4jUploader
         static void Main(string[] args)
         {
             // if running Azure locally, make sure Azure Storage Emulator has started
-            CloudStorageAccount localStorageAccount =
+            var localStorageAccount =
                 CloudStorageAccount.Parse(
                     "UseDevelopmentStorage=true");
-            CloudBlobClient localClient = localStorageAccount.CreateCloudBlobClient();
+            var localClient = localStorageAccount.CreateCloudBlobClient();
 
             
-            CloudStorageAccount cloudStorageAccount =
+            var cloudStorageAccount =
                 CloudStorageAccount.Parse(
                     "DefaultEndpointsProtocol=https;AccountName=neo4j2;AccountKey=TssPCp62gY232dcs8f+RsYn+lXzQyUPt54TTW2kXEM/FGaAJaslKyrG+RxB7kLtBqwqAgntOu01VAjb1/55ENw==");
-            CloudBlobClient cloudClient = cloudStorageAccount.CreateCloudBlobClient();
+            var cloudClient = cloudStorageAccount.CreateCloudBlobClient();
 
             Console.WriteLine("Please press 1 to upload the binaries to Local Storage, or 2 to Azure Storage.");
             var key = Console.ReadKey().KeyChar;
@@ -33,22 +33,25 @@ namespace Neo4jUploader
                 }
 
                 localClient.Timeout = TimeSpan.FromMinutes(30);
-                CloudBlobContainer container = localClient.GetContainerReference("neo4j");
+                var container = localClient.GetContainerReference("neo4j");
                 container.CreateIfNotExist();
-                UploadBlob(container, "jre7.zip", "binaries\\jre7.zip");
-                UploadBlob(container, "neo4j-community-1.8.2.zip", "binaries\\neo4j-community-1.8.2.zip");
+                UploadBlobsToContainer(container);
             }
             else if (key == '2')
             {
                 cloudClient.Timeout = TimeSpan.FromMinutes(30);
-                CloudBlobContainer container = cloudClient.GetContainerReference("neo4j");
+                var container = cloudClient.GetContainerReference("neo4j");
                 container.CreateIfNotExist();
-                UploadBlob(container, "jre7.zip", "binaries\\jre7.zip");
-                UploadBlob(container, "neo4j-community-1.8.2.zip", "binaries\\neo4j-community-1.8.2.zip");
+                UploadBlobsToContainer(container);
             }
         }
- 
-        private static void UploadBlob(CloudBlobContainer container, string blobName, string filename)
+
+       private static void UploadBlobsToContainer(CloudBlobContainer container) {
+          UploadBlob(container, "jre7.zip", "binaries\\jre7.zip");
+          UploadBlob(container, "neo4j-community-1.8.2.zip", "binaries\\neo4j-community-1.8.2.zip");
+       }
+
+       private static void UploadBlob(CloudBlobContainer container, string blobName, string filename)
         {
             CloudBlob blob = container.GetBlobReference(blobName);
  
