@@ -66,5 +66,54 @@ namespace BlobUploader {
       private void UpdateLocationSettings() {
          ApplicationSettings.UseLocalStorage = UseLocalStorage;
       }
+
+      private void JavaPathButtonClick(object sender, RoutedEventArgs e) {
+         ApplicationSettings.JavaLocation = GetFilePath(ApplicationSettings.JavaLocation);
+      }
+
+      private void Neo4JPathButtonClick(object sender, RoutedEventArgs e) {
+         ApplicationSettings.Neo4jLocation = GetFilePath(ApplicationSettings.Neo4jLocation);
+      }
+
+      private String GetFilePath(String existingfilePath) {
+         // Create OpenFileDialog 
+         var dlg = new Microsoft.Win32.OpenFileDialog {
+            DefaultExt = ".zip",
+            Filter =
+               "Zip Files (*.zip)"
+         };
+
+         var result = dlg.ShowDialog();
+
+         // Get the selected file name and display in a TextBox 
+         if (result == true) {
+            // Open document 
+            return dlg.FileName;
+         }
+         else {
+            return existingfilePath;
+         }
+      }
+
+      private void UploadCommandCanExecute(object sender, CanExecuteRoutedEventArgs e) {
+         if (String.IsNullOrEmpty(ApplicationSettings.JavaLocation)) {}
+         else if (String.IsNullOrEmpty(ApplicationSettings.Neo4jLocation)) {}
+         else if (String.IsNullOrEmpty(ApplicationSettings.AccountKey)) {}
+         else if (String.IsNullOrEmpty(ApplicationSettings.SettingsKey)) {}
+         else {
+            e.CanExecute = true;
+         }
+      }
+
+      private void UploadCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
+         if (this.UseCloudStorage) {
+            CloudUploader.InitialiseCloudBlobClient("https", ApplicationSettings.AccountName, ApplicationSettings.AccountKey);
+         }
+         else {
+            CloudUploader.InitialiseLocalBlobClient();
+         }
+
+         CloudUploader.Upload("jre7.zip", "binaries\\jre7.zip", "neo4j-community-1.8.2.zip", "binaries\\neo4j-community-1.8.2.zip");
+      }
    }
 }

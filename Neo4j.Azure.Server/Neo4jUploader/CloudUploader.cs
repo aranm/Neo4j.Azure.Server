@@ -26,16 +26,16 @@ namespace Neo4jUploader {
          _cloudBlobClient = localStorageAccount.CreateCloudBlobClient();
       }
 
-      public void Upload() {
+      public void Upload(string javaStorageName, string binariesJre7Zip, string noe4JStorageName, string binariesNeo4jCommunityZip) {
          _cloudBlobClient.Timeout = Timeout;
          var container = _cloudBlobClient.GetContainerReference("neo4j");
          container.CreateIfNotExist();
-         UploadBlobsToContainer(container);
+         UploadBlobsToContainer(container, javaStorageName, binariesJre7Zip, noe4JStorageName, binariesNeo4jCommunityZip);
       }
 
-      private static void UploadBlobsToContainer(CloudBlobContainer container) {
-         UploadBlob(container, "jre7.zip", "binaries\\jre7.zip");
-         UploadBlob(container, "neo4j-community-1.8.2.zip", "binaries\\neo4j-community-1.8.2.zip");
+      private static void UploadBlobsToContainer(CloudBlobContainer container, string javaStorageName, string javaFilePath, string noe4JStorageName, string neo4JFilePath) {
+         UploadBlob(container, javaStorageName, javaFilePath);
+         UploadBlob(container, noe4JStorageName, neo4JFilePath);
       }
 
       private static void UploadBlob(CloudBlobContainer container, string blobName, string filename) {
