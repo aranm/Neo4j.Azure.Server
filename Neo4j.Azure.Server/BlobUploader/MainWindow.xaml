@@ -5,13 +5,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:w="clr-namespace:BlobUploader"
         Title="Neo 4j Cloud Uploader" Height="350" Width="525">
-<!-- ReSharper restore InconsistentNaming -->
-   <Window.Resources>
-      <RoutedUICommand x:Key="UploadCommand" Text="Upload" />
-   </Window.Resources>
-   <Window.CommandBindings>
-      <CommandBinding Command="{StaticResource UploadCommand}" CanExecute="UploadCommandCanExecute" Executed="UploadCommandExecuted"/>
-   </Window.CommandBindings>
+    <!-- ReSharper restore InconsistentNaming -->
+    <Window.Resources>
+        <RoutedUICommand x:Key="UploadNeo4JCommand" Text="Upload" />
+        <RoutedUICommand x:Key="UploadJavaCommand" Text="Upload" />
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource UploadNeo4JCommand}" CanExecute="UploadNeo4JCommandCanExecute" Executed="UploadNeo4JCommandExecuted"/>
+        <CommandBinding Command="{StaticResource UploadJavaCommand}" CanExecute="UploadJavaCommandCanExecute" Executed="UploadJavaCommandExecuted"/>
+    </Window.CommandBindings>
     <DockPanel>
 
         <TextBlock DockPanel.Dock="Top" Text="Storage location"></TextBlock>
@@ -20,69 +22,76 @@
             <RadioButton GroupName="Location" Content="Cloud" IsChecked="{Binding ElementName=self, Path=UseCloudStorage}" />
         </StackPanel>
 
-      <TextBlock DockPanel.Dock="Top" Text="Account Settings"></TextBlock>
+        <TextBlock DockPanel.Dock="Top" Text="Account Settings"></TextBlock>
 
-      <Grid DockPanel.Dock="Top" Margin="0,10,0,0">
-         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-         </Grid.ColumnDefinitions>
-         <Grid.RowDefinitions>
-            <RowDefinition Height="24"></RowDefinition>
-            <RowDefinition Height="24"></RowDefinition>
-         </Grid.RowDefinitions>
+        <Grid DockPanel.Dock="Top" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24"></RowDefinition>
+                <RowDefinition Height="24"></RowDefinition>
+            </Grid.RowDefinitions>
 
 
-         <TextBlock Grid.Row="0" Grid.Column="0" Text="Account Name"/>
-         <TextBox Grid.Row="0" 
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Account Name"/>
+            <TextBox Grid.Row="0" 
                      Grid.Column="1" 
                      Height="24"
                      IsEnabled="{Binding ElementName=self, Path=UseCloudStorage}"
                      Text="{Binding ElementName=self, Path=ApplicationSettings.AccountName}"></TextBox>
 
-         <TextBlock Grid.Row="1" Grid.Column="0" Text="Account Key"/>
-         <TextBox Grid.Row="1" 
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Account Key"/>
+            <TextBox Grid.Row="1" 
                      Grid.Column="1" 
                      Height="24"
                      IsEnabled="{Binding ElementName=self, Path=UseCloudStorage}"
                      Text="{Binding ElementName=self, Path=ApplicationSettings.AccountKey}"></TextBox>
-      </Grid>
-      <Grid DockPanel.Dock="Top" Margin="0,10,0,0">
-         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition Width="24"></ColumnDefinition>
-         </Grid.ColumnDefinitions>
-         <Grid.RowDefinitions>
-            <RowDefinition Height="24"></RowDefinition>
-            <RowDefinition Height="24"></RowDefinition>
-         </Grid.RowDefinitions>
+        </Grid>
+        <Grid DockPanel.Dock="Top" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="24"></ColumnDefinition>
+                <ColumnDefinition Width="24"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24"></RowDefinition>
+                <RowDefinition Height="24"></RowDefinition>
+            </Grid.RowDefinitions>
 
-         <TextBlock Grid.Row="0" Grid.Column="0" Text="Java Path"/>
-         <TextBox Grid.Row="0" 
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Java Path"/>
+            <TextBox Grid.Row="0" 
                      Grid.Column="1" 
                      Height="24"
                      Text="{Binding ElementName=self, Path=ApplicationSettings.JavaLocation}"></TextBox>
-         <Button Grid.Row="0"
+            <Button Grid.Row="0"
                  Grid.Column="2"
                  Content="..."
                  Click="JavaPathButtonClick"/>
+            <Button 
+                Grid.Row="0"
+                Grid.Column="3"
+                Height="24"
+                Width="100"
+                Command="{StaticResource UploadJavaCommand}" Content="Upload" />
 
-         <TextBlock Grid.Row="1" Grid.Column="0" Text="Neo4jPath"/>
-         <TextBox Grid.Row="1" 
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Neo4jPath"/>
+            <TextBox Grid.Row="1" 
                      Grid.Column="1" 
                      Height="24"
                      Text="{Binding ElementName=self, Path=ApplicationSettings.Neo4jLocation}"></TextBox>
-         <Button Grid.Row="1"
+            <Button Grid.Row="1"
                  Grid.Column="2"
                  Content="..."
                  Click="Neo4JPathButtonClick"/>
-      </Grid>
-
-      <Button 
-         Margin="0,10,0,0" 
-         Height="24"
-         Width="100"
-         Command="{StaticResource UploadCommand}" Content="Upload" />
+            <Button 
+                Grid.Row="1"
+                Grid.Column="3"
+                Height="24"
+                Width="100"
+                Command="{StaticResource UploadNeo4JCommand}" Content="Upload" />
+        </Grid>
     </DockPanel>
 </Window>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BlobUploader.Infrastructure;
 using Neo4jUploader;
+using Path = System.IO.Path;
 
 namespace BlobUploader {
    /// <summary>
@@ -80,7 +82,7 @@ namespace BlobUploader {
          var dlg = new Microsoft.Win32.OpenFileDialog {
             DefaultExt = ".zip",
             Filter =
-               "Zip Files (*.zip)"
+               "Zip Files |*.zip"
          };
 
          var result = dlg.ShowDialog();
@@ -95,25 +97,47 @@ namespace BlobUploader {
          }
       }
 
-      private void UploadCommandCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-         if (String.IsNullOrEmpty(ApplicationSettings.JavaLocation)) {}
-         else if (String.IsNullOrEmpty(ApplicationSettings.Neo4jLocation)) {}
-         else if (String.IsNullOrEmpty(ApplicationSettings.AccountKey)) {}
-         else if (String.IsNullOrEmpty(ApplicationSettings.SettingsKey)) {}
+      private void UploadNeo4JCommandCanExecute(object sender, CanExecuteRoutedEventArgs e) {
+         if (String.IsNullOrEmpty(ApplicationSettings.Neo4jLocation)) { }
+         else if (String.IsNullOrEmpty(ApplicationSettings.AccountName)) { }
+         else if (String.IsNullOrEmpty(ApplicationSettings.AccountKey)) { }
          else {
             e.CanExecute = true;
          }
       }
 
-      private void UploadCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
+      private void UploadNeo4JCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
+         InitialiseCloudStorage();
+         UploadFile(ApplicationSettings.Neo4jLocation);
+      }
+
+
+      private void UploadJavaCommandCanExecute(object sender, CanExecuteRoutedEventArgs e) {
+         if (String.IsNullOrEmpty(ApplicationSettings.JavaLocation)) { }
+         else if (String.IsNullOrEmpty(ApplicationSettings.AccountName)) { }
+         else if (String.IsNullOrEmpty(ApplicationSettings.AccountKey)) { }
+         else {
+            e.CanExecute = true;
+         }
+      }
+
+      private void UploadJavaCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
+         InitialiseCloudStorage();
+         UploadFile(ApplicationSettings.JavaLocation);
+      }
+
+      private void InitialiseCloudStorage() {
          if (this.UseCloudStorage) {
             CloudUploader.InitialiseCloudBlobClient("https", ApplicationSettings.AccountName, ApplicationSettings.AccountKey);
          }
          else {
             CloudUploader.InitialiseLocalBlobClient();
          }
+      }
 
-         CloudUploader.Upload("jre7.zip", "binaries\\jre7.zip", "neo4j-community-1.8.2.zip", "binaries\\neo4j-community-1.8.2.zip");
+      private void UploadFile(string fileLocation) {
+         var fileName = Path.GetFileName(fileLocation);
+         CloudUploader.Upload(fileName, fileLocation);
       }
    }
 }

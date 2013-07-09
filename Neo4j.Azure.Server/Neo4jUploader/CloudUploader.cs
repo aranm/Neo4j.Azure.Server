@@ -9,6 +9,8 @@ using Microsoft.WindowsAzure.StorageClient;
 namespace Neo4jUploader {
    public class CloudUploader {
       private CloudBlobClient _cloudBlobClient;
+      private string _accountKey;
+      private string _accountName;
 
       public CloudUploader() {
          Timeout = TimeSpan.FromMinutes(30);
@@ -17,8 +19,14 @@ namespace Neo4jUploader {
       public TimeSpan Timeout { get; set; }
 
       public void InitialiseCloudBlobClient(string protocol, string accountName, string accountKey) {
-         var cloudStorageAccount = CloudStorageAccount.Parse(string.Format("DefaultEndpointsProtocol={0};AccountName={1};AccountKey={2}", protocol, accountName, accountKey));
-         _cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+         if (accountName == _accountName && accountKey == _accountKey) {}
+         else {
+            _accountName = accountName;
+            _accountKey = accountKey;
+            var cloudStorageAccount = CloudStorageAccount.Parse(string.Format("DefaultEndpointsProtocol={0};AccountName={1};AccountKey={2}", protocol, accountName, accountKey));
+            _cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+         }
       }
 
       public void InitialiseLocalBlobClient() {
@@ -26,16 +34,15 @@ namespace Neo4jUploader {
          _cloudBlobClient = localStorageAccount.CreateCloudBlobClient();
       }
 
-      public void Upload(string javaStorageName, string binariesJre7Zip, string noe4JStorageName, string binariesNeo4jCommunityZip) {
+      public void Upload(string storageName, string pathToFile) {
          _cloudBlobClient.Timeout = Timeout;
          var container = _cloudBlobClient.GetContainerReference("neo4j");
          container.CreateIfNotExist();
-         UploadBlobsToContainer(container, javaStorageName, binariesJre7Zip, noe4JStorageName, binariesNeo4jCommunityZip);
+         UploadBlobsToContainer(container, storageName, pathToFile);
       }
 
-      private static void UploadBlobsToContainer(CloudBlobContainer container, string javaStorageName, string javaFilePath, string noe4JStorageName, string neo4JFilePath) {
+      private static void UploadBlobsToContainer(CloudBlobContainer container, string javaStorageName, string javaFilePath) {
          UploadBlob(container, javaStorageName, javaFilePath);
-         UploadBlob(container, noe4JStorageName, neo4JFilePath);
       }
 
       private static void UploadBlob(CloudBlobContainer container, string blobName, string filename) {
